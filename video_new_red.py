@@ -2,6 +2,7 @@
 import cv2
 import numpy as np
 
+ver = cv2.__version__ # Get opencv version branch
 cv2.namedWindow( "result" ) # создаем главное окно
 cap = cv2.VideoCapture(-1) # обращаемся к любой камере устройства
 
@@ -25,7 +26,11 @@ while True:
     thresh_all = np.uint8(thresh_all) # приводим маску к uint8
     thresh_contour = thresh_all.copy()
     # ищем контуры и складируем их в переменную contours
-    contours, hierarchy = cv2.findContours( thresh_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #openCV version fix for findContours unpacking
+    if ver[0] == "3":
+        dup, contours, hierarchy = cv2.findContours( thresh_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) # For OpenCV 3
+    else:    
+        contours, hierarchy = cv2.findContours( thresh_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) # For OpenCV cv4
     
     # отображаем контуры поверх изображения
     cv2.drawContours( thresh_contour, contours, -1, (255,0,0), 3, cv2.LINE_AA, hierarchy, 1) 
